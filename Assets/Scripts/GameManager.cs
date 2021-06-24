@@ -13,7 +13,7 @@ namespace WonderDanceProj
         private BeatMapPlayer beatMapPlayer = new BeatMapPlayer();
 
         #region Unity BuiltIn Methods
-        private void Awake()
+        private async void Awake()
         {
             // Check singleton exists
             if (singleton != null)
@@ -25,13 +25,15 @@ namespace WonderDanceProj
 
             // Set singleton if not exists yet
             singleton = this;
-            DataFileLoader.LoadData();
+            await DataFileLoader.LoadData();
         }
 
         private void OnDestroy()
         {
             // Safe release static data
             singleton = null;
+            DataFileLoader.SaveData();
+            DataFileLoader.ClearLoadedData();
         }
         #endregion
     }
