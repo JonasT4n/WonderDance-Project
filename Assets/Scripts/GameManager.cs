@@ -30,6 +30,8 @@ namespace WonderDanceProj
         #endif
         [BoxGroup("DEBUG"), SerializeField, ReadOnly]
         internal Beatmap                    _selectedMap = null;
+        [BoxGroup("DEBUG"), SerializeField, ReadOnly]
+        internal string                     _characterKey = string.Empty;
 
         #region Properties
         public static GameManager Singleton => _S;
@@ -61,7 +63,6 @@ namespace WonderDanceProj
             StartCoroutine(LevelLoadingRoutine());
 
             // Subscribe events
-            SceneManager.sceneLoaded += HandleSceneLoaded;
             EventHandler.OnBeatmapSaveChangesEvent += HandleSaveChanges;
         }
 
@@ -77,25 +78,12 @@ namespace WonderDanceProj
                 DataFileLoader.ClearLoadedData();
 
                 // Unsubscribe events
-                SceneManager.sceneLoaded -= HandleSceneLoaded;
                 EventHandler.OnBeatmapSaveChangesEvent += HandleSaveChanges;
             }
         }
         #endregion
 
         #region Event Methods
-        private void HandleSceneLoaded(Scene newScene, LoadSceneMode arg1)
-        {
-            // Load and play level
-            switch (State)
-            {
-                case GameState.Gameplay:
-                    BeatmapPlayer.Singleton.SetBeatmap(_selectedMap);
-                    BeatmapPlayer.Singleton.PlayBeatMap(UIMenuManager.InputControl);
-                    break;
-            }
-        }
-
         private void HandleSaveChanges(SaveEditBeatmapEventArgs args)
         {
             // Set current beatmap data in game manager

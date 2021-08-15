@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 8789e00e2d6a76b45a52fe84a13db5bf
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - ImperatorSmallCaps
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 614aeaa2250bf9b4f96afe823b7d6e22, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

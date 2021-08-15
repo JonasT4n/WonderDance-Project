@@ -11,8 +11,7 @@ using UnityEditor;
 
 namespace WonderDanceProj
 {
-
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
     [CustomEditor(typeof(LevelContainer))]
     public class LevelContainerEditor : Editor
     {
@@ -39,15 +38,13 @@ namespace WonderDanceProj
             }
         }
     }
-#endif
+    #endif
 
     public class LevelContainer : ScrollRect
     {
         [Header("Attributes")]
         [SerializeField]
         private float               _atPreviewTime = 12f;
-        [SerializeField, Scene]
-        private string              _gameplayScene = string.Empty;
 
         [Header("UI Helper")]
         [SerializeField]
@@ -78,9 +75,8 @@ namespace WonderDanceProj
                 // Check selected beatmap and confirmation
                 if (beatmap.Equals(_selectedBeatmap))
                 {
-                    // Confirm play beatmap, go to gameplay scene
-                    GameManager.State = GameState.Gameplay;
-                    SceneManager.LoadScene(_gameplayScene);
+                    // Confirmation play beatmap
+                    UIMenuManager.Singleton.StartPlay();
                 }
                 else
                 {

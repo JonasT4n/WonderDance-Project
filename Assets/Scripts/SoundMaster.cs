@@ -220,7 +220,7 @@ namespace WonderDanceProj
 
                 // Fading out effect
                 float percentFadeOut = tempSec / 0.5f;
-                audioBGM.volume = Mathf.Lerp(_volumeBGM, 0f, percentFadeOut);
+                audioBGM.volume = Mathf.Lerp(0f, _volumeBGM, percentFadeOut);
             }
 
             // Stop playing the music

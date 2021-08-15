@@ -232,7 +232,7 @@ namespace WonderDanceProj
             HitType result = (HitType)(((int)endHit + (int)_hitTiming) / 2);
 
             // Call event then disable object
-            EventHandler.CallEvent(new HoldNoteFinishedEventArgs(this, result));
+            EventHandler.CallEvent(new HoldNoteFinishedEventArgs(this, result, AtColumn.ColumnIndex));
             gameObject.SetActive(false);
         }
 

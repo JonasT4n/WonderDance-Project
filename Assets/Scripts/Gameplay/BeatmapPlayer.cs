@@ -103,12 +103,15 @@ namespace WonderDanceProj
 
         [Header("Attributes")]
         [SerializeField] private float                      _endGameDelaySeconds = 3f;
+        [SerializeField] private float                      _delayStart = 3f;
 
         // Temporary variables
         [BoxGroup("DEBUG"), SerializeField, ReadOnly] 
         private InputMap                                    _inputMap = new InputMap();
         [BoxGroup("DEBUG"), SerializeField, ReadOnly]
         private Beatmap                                     _beatMap = null;
+        [BoxGroup("DEBUG"), SerializeField, ReadOnly]
+        internal Character                                  _choosenCharacter = null;
         [BoxGroup("DEBUG"), SerializeField, ReadOnly]
         private int                                         _sequenceIndex = 0;
         [BoxGroup("DEBUG"), SerializeField, ReadOnly]
@@ -138,6 +141,24 @@ namespace WonderDanceProj
 
             // Set singleton
             _S = this;
+
+            // Load beatmap
+            SetBeatmap(GameManager.Singleton._selectedMap);
+
+            // Check editor mode active
+            if (!UIGameManager.IsEditorModeActive)
+            {
+                // Set character
+                Character @char = GameManager.Singleton.Asset.GetCharacter(GameManager.Singleton._characterKey);
+                if (@char != null)
+                {
+                    _choosenCharacter = Instantiate(@char);
+                    _choosenCharacter.gameObject.SetActive(true);
+                }
+
+                // Play beatmap
+                PlayBeatMap(UIMenuManager.InputControl);
+            }
 
             // Subscribe events
             UIGameManager.OnRestartGame += HandleRestartLevel;
@@ -203,7 +224,7 @@ namespace WonderDanceProj
         private void HandleHitNote(NoteHitEventArgs args)
         {
             // Check if objects are exists in every column
-            if (!_columns.Any(column => column.GetObjectsLeftover() > 0))
+            if (!_columns.Any(column => column.GetObjectsLeftover() > 0) && !UIGameManager.IsEditorModeActive)
             {
                 // End the gameplay
                 EndGame();
@@ -213,7 +234,7 @@ namespace WonderDanceProj
         private void HandleHoldNote(HoldNoteFinishedEventArgs args)
         {
             // Check if objects are exists in every column
-            if (!_columns.Any(column => column.GetObjectsLeftover() > 0))
+            if (!_columns.Any(column => column.GetObjectsLeftover() > 0) && !UIGameManager.IsEditorModeActive)
             {
                 // End the gameplay
                 EndGame();
@@ -273,7 +294,7 @@ namespace WonderDanceProj
             OnSequenceChange?.Invoke(_sequenceIndex, _subSequenceIndex);
 
             // Check if there is no objects in beatmap, immediately call for end game
-            if (!_columns.Any(column => column.GetObjectsLeftover() > 0))
+            if (!_columns.Any(column => column.GetObjectsLeftover() > 0) && !UIGameManager.IsEditorModeActive)
             {
                 // End the gameplay
                 EndGame();

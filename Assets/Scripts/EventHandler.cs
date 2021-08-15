@@ -90,16 +90,19 @@ namespace WonderDanceProj
     {
         private INoteKey obj;
         private HitType type;
+        private int moveKey;
 
         #region Properties
         public INoteKey Note => obj;
         public HitType HitScoreType => type;
+        public int MovementKey => moveKey;
         #endregion
 
-        public NoteHitEventArgs(INoteKey obj, HitType type)
+        public NoteHitEventArgs(INoteKey obj, HitType type, int moveKey)
         {
             this.obj = obj;
             this.type = type;
+            this.moveKey = moveKey;
         }
     }
 
@@ -107,16 +110,19 @@ namespace WonderDanceProj
     {
         private INoteKey obj;
         private HitType type;
+        private int moveKey;
 
         #region Properties
         public INoteKey Note => obj;
         public HitType HitScoreType => type;
+        public int MovementKey => moveKey;
         #endregion
 
-        public HoldNoteFinishedEventArgs(INoteKey obj, HitType type)
+        public HoldNoteFinishedEventArgs(INoteKey obj, HitType type, int moveKey)
         {
             this.obj = obj;
             this.type = type;
+            this.moveKey = moveKey;
         }
     }
 

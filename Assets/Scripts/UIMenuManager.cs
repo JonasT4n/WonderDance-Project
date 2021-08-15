@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using NaughtyAttributes;
 using TMPro;
 #if UNITY_EDITOR
@@ -12,13 +13,16 @@ namespace WonderDanceProj
 {
     public class UIMenuManager : MonoBehaviour
     {
+        // Singleton behaviour
+        private static UIMenuManager    _S;
+
         [Header("UI Pages")]
         [SerializeField]
         private Animator                _mainMenuPage = null;
         [SerializeField]
         private Animator                _levelMenuPage = null;
         [SerializeField]
-        private Animator                _settingsPage = null;
+        private Animator                _chooseCharacterDialog = null;
 
         [Header("UI Input Settings")]
         [SerializeField]
@@ -29,6 +33,12 @@ namespace WonderDanceProj
         private Slider                  _bgmVolumeSlider = null;
         [SerializeField]
         private Slider                  _sfxVolumeSlider = null;
+        [SerializeField]
+        private Toggle                  _editModeToggle = null;
+
+        [Header("Attributes")]
+        [SerializeField, Scene]
+        private string                  _gameplayScene = string.Empty;
 
         // Temporary variables
         [BoxGroup("DEBUG"), SerializeField, ReadOnly]
@@ -47,12 +57,26 @@ namespace WonderDanceProj
         private IEnumerator             _transitionRoutine = null;
 
         #region Properties
+        public static UIMenuManager Singleton => _S;
         public static InputMap InputControl => _fixedInputMap;
         #endregion
 
         #region Unity BuiltIn Methods
         private void Awake()
         {
+            // Check singleton exists
+            if (_S != null)
+            {
+                #if UNITY_EDITOR
+                Debug.LogWarning($"Deleted extra object of singleton behaviour, you can ignore this warning.");
+                #endif
+                Destroy(this);
+                return;
+            }
+
+            // Set singleton if not exists yet
+            _S = this;
+
             // Subscribe events
             _bgmVolumeSlider.onValueChanged.AddListener(val =>
             {
@@ -63,6 +87,11 @@ namespace WonderDanceProj
             {
                 // Set volume at speaker
                 SoundMaster.Singleton.SetSFXVolume(val);
+            });
+            _editModeToggle.onValueChanged.AddListener(active =>
+            {
+                // Assign editor mode
+                UIGameManager.IsEditorModeActive = active;
             });
             for (int i = 0; i < InputMap.MAX_KEY; i++)
             {
@@ -89,9 +118,9 @@ namespace WonderDanceProj
             // Set settings initial values
             _bgmVolumeSlider.value = SoundMaster.Singleton._volumeBGM;
             _sfxVolumeSlider.value = SoundMaster.Singleton._volumeSFX;
+            _editModeToggle.isOn = UIGameManager.IsEditorModeActive;
 
             // Check game state to activate which menu
-            _settingsPage.gameObject.SetActive(false);
             switch (GameManager.State)
             {
                 case GameState.LevelMenu:
@@ -136,14 +165,21 @@ namespace WonderDanceProj
 
         private void OnDestroy()
         {
-            // Unsubscribe events
-            _bgmVolumeSlider.onValueChanged.RemoveAllListeners();
-            _sfxVolumeSlider.onValueChanged.RemoveAllListeners();
-            for (int i = 0; i < InputMap.MAX_KEY; i++)
+            // Release singleton
+            if (this.Equals(_S))
             {
-                // Remove all events on each buttons
-                Button button = _changeInputButton[i];
-                button.onClick.RemoveAllListeners();
+                _S = null;
+
+                // Unsubscribe events
+                _bgmVolumeSlider.onValueChanged.RemoveAllListeners();
+                _sfxVolumeSlider.onValueChanged.RemoveAllListeners();
+                _editModeToggle.onValueChanged.RemoveAllListeners();
+                for (int i = 0; i < InputMap.MAX_KEY; i++)
+                {
+                    // Remove all events on each buttons
+                    Button button = _changeInputButton[i];
+                    button.onClick.RemoveAllListeners();
+                }
             }
         }
         #endregion
@@ -189,24 +225,49 @@ namespace WonderDanceProj
             GameManager.State = GameState.LevelMenu;
         }
 
-        public void OpenSettings()
+        public void OpenPage(Animator target)
         {
             // Check current transition routine is running, then ignore
             if (_transitionRoutine != null) return;
 
             // Run transition
-            _transitionRoutine = OpenSettingsTransition();
+            _transitionRoutine = OpenPageTransition(target);
             StartCoroutine(_transitionRoutine);
         }
 
-        public void CloseSettings()
+        public void ClosePage(Animator target)
         {
             // Check current transition routine is running, then ignore
             if (_transitionRoutine != null) return;
 
             // Run transition
-            _transitionRoutine = CloseSettingsTransition();
+            _transitionRoutine = ClosePageTransition(target);
             StartCoroutine(_transitionRoutine);
+        }
+
+        public void PickCharacter(string characterKey)
+        {
+            // Pick the character
+            GameManager.Singleton._characterKey = characterKey;
+
+            // Confirm play beatmap, go to gameplay scene
+            GameManager.State = GameState.Gameplay;
+            SceneManager.LoadScene(_gameplayScene);
+        }
+
+        public void StartPlay()
+        {
+            // Check editor must active
+            if (UIGameManager.IsEditorModeActive)
+            {
+                // Confirm play beatmap, go to gameplay scene
+                GameManager.State = GameState.Gameplay;
+                SceneManager.LoadScene(_gameplayScene);
+                return;
+            }
+
+            // Call for choosing character dialog
+            OpenPage(_chooseCharacterDialog);
         }
 
         private void SetControlKey(Button button)
@@ -235,14 +296,14 @@ namespace WonderDanceProj
             return KeyCode.None;
         }
 
-        private IEnumerator OpenSettingsTransition()
+        private IEnumerator OpenPageTransition(Animator target)
         {
             // Enable object, then do transition
-            _settingsPage.gameObject.SetActive(true);
+            target.gameObject.SetActive(true);
 
             // Get enter duration
-            _settingsPage.SetBool("Active", true);
-            AnimatorStateInfo info = _settingsPage.GetCurrentAnimatorStateInfo(0);
+            target.SetBool("Active", true);
+            AnimatorStateInfo info = target.GetCurrentAnimatorStateInfo(0);
             float duration = info.length;
 
             // Wait for animation finish
@@ -256,11 +317,11 @@ namespace WonderDanceProj
             _transitionRoutine = null;
         }
 
-        private IEnumerator CloseSettingsTransition()
+        private IEnumerator ClosePageTransition(Animator target)
         {
             // Get exit duration
-            _settingsPage.SetBool("Active", false);
-            AnimatorStateInfo info = _settingsPage.GetCurrentAnimatorStateInfo(0);
+            target.SetBool("Active", false);
+            AnimatorStateInfo info = target.GetCurrentAnimatorStateInfo(0);
             float duration = info.length;
 
             // Wait for animation finish
@@ -271,7 +332,7 @@ namespace WonderDanceProj
             }
 
             // Disable object after transition
-            _settingsPage.gameObject.SetActive(false);
+            target.gameObject.SetActive(false);
 
             // Release transition routine
             _transitionRoutine = null;

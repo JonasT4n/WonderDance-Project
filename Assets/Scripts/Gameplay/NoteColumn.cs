@@ -200,7 +200,7 @@ namespace WonderDanceProj
                             if (pressedNote.Type == NoteType.HitNote || hitType == HitType.Miss)
                             {
                                 // Call event for hit note only
-                                EventHandler.CallEvent(new NoteHitEventArgs(pressedNote, hitType));
+                                EventHandler.CallEvent(new NoteHitEventArgs(pressedNote, hitType, ColumnIndex));
 
                                 // Immediately disable when hit
                                 mono.gameObject.SetActive(false);
@@ -266,7 +266,7 @@ namespace WonderDanceProj
             {
                 // Check control hit down, then ignore it
                 if (!_isControlDown)
-                    EventHandler.CallEvent(new NoteHitEventArgs(args.Note, HitType.Miss));
+                    EventHandler.CallEvent(new NoteHitEventArgs(args.Note, HitType.Miss, ColumnIndex));
             }
         }
 

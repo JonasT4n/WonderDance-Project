@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 using NaughtyAttributes;
 
 namespace WonderDanceProj
@@ -10,9 +11,11 @@ namespace WonderDanceProj
     {
         [Header("Asset Requirements")]
         [SerializeField, ShowAssetPreview]
-        private Sprite[]    _keySprites = { null };
+        private Sprite[]            _keySprites = { null };
         [SerializeField]
-        private Color[]     _fillerColor = { Color.white };
+        private Color[]             _fillerColor = { Color.white };
+        [SerializeField]
+        private Character[]         _characterPrefab = { null };
 
         public Sprite GetKeySpriteByIndex(int index)
         {
@@ -37,6 +40,14 @@ namespace WonderDanceProj
                 return Color.white;
             }
         }
-    }
 
+        internal Character GetCharacter(string name)
+        {
+            foreach (Character @char in _characterPrefab)
+            {
+                if (name.Equals(@char.name)) return @char;
+            }
+            return null;
+        }
+    }
 }

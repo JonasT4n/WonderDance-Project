@@ -65,13 +65,16 @@ namespace WonderDanceProj
         private bool                _isCountdownResume = false;
 
         // Temporary variables
-        [BoxGroup("DEBUG"), SerializeField, ReadOnly]
-        private bool                _isEditorModeActive = false;
+        private static bool         _isEditorModeActive = false;
         private IEnumerator         _countdownRoutine;
 
         #region Properties
         public static UIGameManager Singleton => _S;
-        public static bool IsEditorModeActive => _S._isEditorModeActive;
+        public static bool IsEditorModeActive
+        {
+            set => _isEditorModeActive = value;
+            get => _isEditorModeActive;
+        }
         public BeatmapEditor EditorUI => _editor;
         #endregion
 
@@ -98,6 +101,12 @@ namespace WonderDanceProj
             BeatmapPlayer.OnBeginPlay += HandleBeginGameplay;
             BeatmapPlayer.OnPreEndPlay += HandlePreEndGameplay;
             BeatmapPlayer.OnEndPlay += HandleEndGameplay;
+        }
+
+        private void Start()
+        {
+            // Check editor mode active, then activate it
+            if (_isEditorModeActive) _editor.gameObject.SetActive(true);
         }
 
         private void Update()
@@ -162,7 +171,14 @@ namespace WonderDanceProj
         /// <summary>
         /// Restart the level.
         /// </summary>
-        public void RestartGame() => OnRestartGame?.Invoke();
+        public void RestartGame()
+        {
+            // Disable end UI
+            _endPage.gameObject.SetActive(false);
+
+            // Call event
+            OnRestartGame?.Invoke();
+        }
 
         /// <summary>
         /// Pause current gameplay.
