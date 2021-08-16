@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Character Atlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: c06caf67c061b694ca807fced365f89d, type: 3}
+    totalSpriteSurfaceArea: 17185569
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 66f99214dfb0c7348a6dd23f7364e696, type: 3}
+  - {fileID: 21300000, guid: 1b120216d8365aa4381c3597bccfe4d3, type: 3}
+  - {fileID: 21300000, guid: 7957d4463cf089a4f9faa0349d5721f1, type: 3}
+  - {fileID: 21300000, guid: d84c7c8677a2ef3429e19e295f458ecd, type: 3}
+  - {fileID: 21300000, guid: dffd01f65fe1f3c468ecc315ac3252fb, type: 3}
+  - {fileID: -2231073154388600880, guid: 16e49d1795bdad2478f5c8b7113d8d42, type: 3}
+  - {fileID: 2164023481867252793, guid: 16e49d1795bdad2478f5c8b7113d8d42, type: 3}
+  - {fileID: -7704105959459894071, guid: 16e49d1795bdad2478f5c8b7113d8d42, type: 3}
+  - {fileID: 9204791371752913997, guid: 16e49d1795bdad2478f5c8b7113d8d42, type: 3}
+  - {fileID: -2693285425405742652, guid: 16e49d1795bdad2478f5c8b7113d8d42, type: 3}
+  - {fileID: -8972709506907527635, guid: ee941ee7ed779774faf166943b354877, type: 3}
+  - {fileID: -1776168684757994131, guid: ee941ee7ed779774faf166943b354877, type: 3}
+  - {fileID: -4712279224611026247, guid: ee941ee7ed779774faf166943b354877, type: 3}
+  - {fileID: 3095446991293565017, guid: ee941ee7ed779774faf166943b354877, type: 3}
+  - {fileID: 5777155761162811681, guid: ee941ee7ed779774faf166943b354877, type: 3}
+  - {fileID: 21300000, guid: 2905376901a3d0e48a0d635fa5b800b3, type: 3}
+  - {fileID: 21300000, guid: e19d922d60c996444b82ac7d00496a34, type: 3}
+  - {fileID: 21300000, guid: 56787b9dcdff77c4db1be4058170c309, type: 3}
+  - {fileID: 21300000, guid: 6e97464e559a7a54e9ada75f1cfa3a81, type: 3}
+  - {fileID: 21300000, guid: d0ae138e5a103f2469a9f4ab93a0469c, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - Boy Up
+  - Girl Right
+  - Boy Miss
+  - Boy Down
+  - Boy Right
+  - Girl Idle_0
+  - Girl Idle_1
+  - Girl Idle_2
+  - Girl Idle_3
+  - Girl Idle_4
+  - Boy Idle_4
+  - Boy Idle_2
+  - Boy Idle_3
+  - Boy Idle_0
+  - Boy Idle_1
+  - Girl Down
+  - Girl Up
+  - Girl Left
+  - Girl Miss
+  - Boy Left
+  m_RenderDataMap: {}
+  m_Tag: Character Atlas
+  m_IsVariant: 0

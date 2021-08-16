@@ -11,11 +11,11 @@ TagManager:
   - 
   - Water
   - UI
+  - Rhythm
   - 
+  - Others
   - 
-  - 
-  - 
-  - 
+  - Editor Layer
   - 
   - 
   - 
@@ -40,4 +40,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 477653705
+    locked: 0
+  - name: Foreground
+    uniqueID: 3668996097
+    locked: 0
+  - name: UI
+    uniqueID: 2659513995
     locked: 0

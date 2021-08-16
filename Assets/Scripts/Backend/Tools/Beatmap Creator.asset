@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f025f4ff576084846a4891449243c48a, type: 3}
+  m_Name: Beatmap Creator
+  m_EditorClassIdentifier: 
+  _song: {fileID: 0}
+  _beatmap:
+    bpm: 130
+    mapName: 
+    startPointSeconds: 0
+    dropSpeed: 5
+    sequenceDiv: 16
+    tempSeqDiv: 16
+    lines: 4
+    objectsMetaData: 
