@@ -28,7 +28,7 @@ namespace WonderDanceProj
         /// Event callen when quiting the current game.
         /// This event called from Pause State to Level Menu State.
         /// </summary>
-        public static event System.Action OnQuitGame;
+        public static event System.Action           OnQuitGame;
 
         /// <summary>
         /// Event called whenever the game is pause or unpause.
@@ -41,41 +41,43 @@ namespace WonderDanceProj
         /// </summary>
         public static event System.Action           OnRestartGame;
 
+        /// <summary>
+        /// Event called when countdown is finished before start the game.
+        /// </summary>
+        public static event System.Action           OnCountdownFinish;
+
         // Singleton behaviour
         public static UIGameManager     _S;
 
         [Header("UI Pages")]
         [SerializeField] 
-        private BeatmapEditor       _editor = null;
+        private BeatmapEditor           _editor = null;
         [SerializeField]
-        private RectTransform       _pausePanel = null;
+        private RectTransform           _pausePanel = null;
         [SerializeField]
-        private RectTransform       _endPage = null;
+        private RectTransform           _endPage = null;
+        [SerializeField]
+        private Animator                _countdownUI = null;
 
         [Header("UI Elements")]
         [SerializeField]
-        private Button              _pauseButton = null;
+        private Button                  _pauseButton = null;
+        [SerializeField]
+        private TextMeshProUGUI         _beatmapLabel = null;
 
         [Header("Attributes")]
         [SerializeField, Scene]
-        private string              _levelMenuScene = string.Empty;
+        private string                  _levelMenuScene = string.Empty;
         [SerializeField]
-        private float               _countdownSeconds = 3f;
+        private float                   _countdownSeconds = 3f;
         [SerializeField]
-        private bool                _isCountdownResume = false;
+        private bool                    _isCountdownResume = false;
 
         // Temporary variables
-        private static bool         _isEditorModeActive = false;
-        private IEnumerator         _countdownRoutine;
+        private IEnumerator             _countdownRoutine;
 
         #region Properties
-        public static UIGameManager Singleton => _S;
-        public static bool IsEditorModeActive
-        {
-            set => _isEditorModeActive = value;
-            get => _isEditorModeActive;
-        }
-        public BeatmapEditor EditorUI => _editor;
+        public static bool IsEditorModeActive { set; get; } = false;
         #endregion
 
         #region Unity BuiltIn Methods
@@ -94,9 +96,6 @@ namespace WonderDanceProj
             // Set singleton if not exists yet
             _S = this;
 
-            // Set editor inactive
-            _editor.gameObject.SetActive(false);
-
             // Subscribe events
             BeatmapPlayer.OnBeginPlay += HandleBeginGameplay;
             BeatmapPlayer.OnPreEndPlay += HandlePreEndGameplay;
@@ -106,7 +105,17 @@ namespace WonderDanceProj
         private void Start()
         {
             // Check editor mode active, then activate it
-            if (_isEditorModeActive) _editor.gameObject.SetActive(true);
+            if (IsEditorModeActive)
+            {
+                // Activate editor UI
+                _editor.gameObject.SetActive(true);
+            }
+            else
+            {
+                // Countdown before start
+                _countdownRoutine = AwaitStartCountdown(GameManager.Singleton._selectedMap);
+                StartCoroutine(_countdownRoutine);
+            }
         }
 
         private void Update()
@@ -178,6 +187,10 @@ namespace WonderDanceProj
 
             // Call event
             OnRestartGame?.Invoke();
+
+            // Start countdown
+            _countdownRoutine = AwaitStartCountdown(GameManager.Singleton._selectedMap);
+            StartCoroutine(_countdownRoutine);
         }
 
         /// <summary>
@@ -208,18 +221,46 @@ namespace WonderDanceProj
         public void SetEditorMode(bool active)
         {
             // Check active changes
-            if (_isEditorModeActive != active)
+            if (IsEditorModeActive != active)
             {
                 // Assign active editor state
-                if (active) _isEditorModeActive = true;
+                if (active) IsEditorModeActive = true;
                 _editor.gameObject.SetActive(active);
 
                 // Call event
                 EventHandler.CallEvent(new EditorModeActiveEventArgs(active));
 
                 // Assign disable editor state
-                if (!active) _isEditorModeActive = false;
+                if (!active) IsEditorModeActive = false;
             }
+        }
+
+        private IEnumerator AwaitStartCountdown(Beatmap beatmap)
+        {
+            // Activate game object
+            _countdownUI.gameObject.SetActive(true);
+
+            // Set label
+            _beatmapLabel.text = beatmap.MapName;
+
+            // Get duration before start
+            _countdownUI.SetBool("Active", true);
+            AnimatorStateInfo info = _countdownUI.GetCurrentAnimatorStateInfo(0);
+            float duration = info.length;
+
+            // Wait for finish
+            while (duration > 0f)
+            {
+                duration -= Time.deltaTime;
+                yield return null;
+            }
+
+            // Call event
+            OnCountdownFinish?.Invoke();
+            _countdownUI.gameObject.SetActive(false);
+
+            // Release routine cache
+            _countdownRoutine = null;
         }
 
         private IEnumerator ResumeCountdownRoutine(bool active)

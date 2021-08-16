@@ -103,7 +103,6 @@ namespace WonderDanceProj
 
         [Header("Attributes")]
         [SerializeField] private float                      _endGameDelaySeconds = 3f;
-        [SerializeField] private float                      _delayStart = 3f;
 
         // Temporary variables
         [BoxGroup("DEBUG"), SerializeField, ReadOnly] 
@@ -142,10 +141,25 @@ namespace WonderDanceProj
             // Set singleton
             _S = this;
 
+            // Subscribe events
+            UIGameManager.OnCountdownFinish += HandleFinishedCountdown;
+            EventHandler.OnEditorModeActiveEvent += HandleEditorModeActive;
+            EventHandler.OnHitNoteEvent += HandleHitNote;
+            EventHandler.OnHoldNoteFinishEvent += HandleHoldNote;
+        }
+
+        private void HandleFinishedCountdown()
+        {
             // Load beatmap
             SetBeatmap(GameManager.Singleton._selectedMap);
 
-            // Check editor mode active
+            // Play beatmap
+            PlayBeatMap(UIMenuManager.InputControl);
+        }
+
+        private void Start()
+        {
+            // Check editor mode
             if (!UIGameManager.IsEditorModeActive)
             {
                 // Set character
@@ -155,16 +169,7 @@ namespace WonderDanceProj
                     _choosenCharacter = Instantiate(@char);
                     _choosenCharacter.gameObject.SetActive(true);
                 }
-
-                // Play beatmap
-                PlayBeatMap(UIMenuManager.InputControl);
             }
-
-            // Subscribe events
-            UIGameManager.OnRestartGame += HandleRestartLevel;
-            EventHandler.OnEditorModeActiveEvent += HandleEditorModeActive;
-            EventHandler.OnHitNoteEvent += HandleHitNote;
-            EventHandler.OnHoldNoteFinishEvent += HandleHoldNote;
         }
 
         private void Update()
@@ -195,7 +200,7 @@ namespace WonderDanceProj
                 _S = null;
 
                 // Unsubscribe events
-                UIGameManager.OnRestartGame -= HandleRestartLevel;
+                UIGameManager.OnCountdownFinish -= HandleFinishedCountdown;
                 EventHandler.OnEditorModeActiveEvent -= HandleEditorModeActive;
                 EventHandler.OnHitNoteEvent -= HandleHitNote;
                 EventHandler.OnHoldNoteFinishEvent -= HandleHoldNote;
@@ -204,13 +209,6 @@ namespace WonderDanceProj
         #endregion
 
         #region Event Methods
-        private void HandleRestartLevel()
-        {
-            // Restart game
-            SetBeatmap(GameManager.Singleton._selectedMap);
-            PlayBeatMap(UIMenuManager.InputControl);
-        }
-
         private void HandleEditorModeActive(EditorModeActiveEventArgs args)
         {
             // Check exit editor mode, the reply the level

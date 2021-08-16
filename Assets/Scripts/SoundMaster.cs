@@ -62,6 +62,7 @@ namespace WonderDanceProj
 
             // Subscribe events
             UIGameManager.OnPauseGameActive += HandlePauseGame;
+            UIGameManager.OnRestartGame += HandleRestartGame;
             BeatmapPlayer.OnBeginPlay += HandleBeginPlay;
             BeatmapPlayer.OnEndPlay += HandleEndPlay;
         }
@@ -70,6 +71,12 @@ namespace WonderDanceProj
         {
             // Init components and set values
             audioBGM.playOnAwake = false;
+        }
+
+        private void Update()
+        {
+            // Update current time value
+            if (IsPlaying) _atCurrentTime = audioBGM.time;
         }
 
         private void OnDestroy()
@@ -81,6 +88,7 @@ namespace WonderDanceProj
 
                 // Unsubscribe events
                 UIGameManager.OnPauseGameActive -= HandlePauseGame;
+                UIGameManager.OnRestartGame -= HandleRestartGame;
                 BeatmapPlayer.OnBeginPlay -= HandleBeginPlay;
                 BeatmapPlayer.OnEndPlay -= HandleEndPlay;
             }
@@ -96,6 +104,12 @@ namespace WonderDanceProj
                 if (active) Stop();
                 else Play();
             }
+        }
+
+        private void HandleRestartGame()
+        {
+            // Set volume back to where it was
+            audioBGM.volume = _volumeBGM;
         }
 
         private void HandleBeginPlay()
@@ -225,6 +239,7 @@ namespace WonderDanceProj
 
             // Stop playing the music
             Stop();
+            audioBGM.volume = _volumeBGM;
 
             // Release routine
             _fadingRoutine = null;

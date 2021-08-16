@@ -78,6 +78,8 @@ namespace WonderDanceProj
             // Debug section
             EditorGUILayout.BeginVertical(EditorGUIStyles.GetBoxStyle(Color.gray));
             EditorGUILayout.LabelField("Debug");
+            var debugS = serializedObject.FindProperty("_debug");
+            EditorGUILayout.PropertyField(debugS);
             GUI.enabled = false;
             EditorGUILayout.EnumPopup("Input Control Key", column.ControlKey);
             EditorGUILayout.IntField("At Column Index", column.ColumnIndex);
@@ -128,11 +130,14 @@ namespace WonderDanceProj
         [SerializeField]
         [Tooltip("When control button pressed, it will change to this color.")]
         private Color               _pressedColor = Color.gray;
+        [SerializeField]
+        private bool                _debug = true;
 
         // Temporary variables
         private Dictionary<int, INoteKey>       _noteObjects = new Dictionary<int, INoteKey>();
         private Dictionary<int, BlankNote>      _blankNoteObjs = new Dictionary<int, BlankNote>();
         private int                             _atColumnIndex = 0;
+        
         internal float                          _dropSpeed = 0f;
         internal bool                           _isControlDown = false;
         internal bool                           _isControlHold = false;
@@ -533,15 +538,6 @@ namespace WonderDanceProj
             }
         }
 
-        private void ReInitializeObjects()
-        {
-            // Clear previous note objects
-            ClearColumnObj();
-
-            // Create all note objects
-            InitColumnObj();
-        }
-
         private void ReInitalizeBlanks()
         {
             // Clear previous blank objects
@@ -549,6 +545,29 @@ namespace WonderDanceProj
 
             // Create blank objects when new beatmap set
             InitBlankObj();
+
+            #if UNITY_EDITOR // Debug
+            if (_debug)
+            {
+                Debug.Log($"Initialized Blanks with {_blankNoteObjs.Count} Sequences.");
+            }
+            #endif
+        }
+
+        private void ReInitializeObjects()
+        {
+            // Clear previous note objects
+            ClearColumnObj();
+
+            // Create all note objects
+            InitColumnObj();
+
+            #if UNITY_EDITOR // Debug
+            if (_debug)
+            {
+                Debug.Log($"Initialized objects with {_noteObjects.Count} Objects in column {ColumnIndex}.");
+            }
+            #endif
         }
 
         /// <summary>

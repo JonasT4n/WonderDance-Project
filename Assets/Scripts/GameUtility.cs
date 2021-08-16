@@ -67,5 +67,7 @@ namespace WonderDanceProj
         Perfect = 3,
     }
 
+    internal enum Grade { C, B, A, EX, EXPlus, FR }
+
     internal enum GameState { MainMenu, LevelMenu, Gameplay }
 }

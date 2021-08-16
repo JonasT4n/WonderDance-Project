@@ -17,7 +17,7 @@ namespace WonderDanceProj
         public static event System.Action   OnAppLoaded;
 
         // Singleton Behaviour
-        public static GameManager           _S;
+        private static GameManager          _S;
 
         [Header("Requirements")]
         [SerializeField]

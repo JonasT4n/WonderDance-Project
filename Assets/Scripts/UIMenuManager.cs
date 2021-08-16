@@ -42,7 +42,7 @@ namespace WonderDanceProj
 
         // Temporary variables
         [BoxGroup("DEBUG"), SerializeField, ReadOnly]
-        private int                     _inputIndex = 0;
+        private int                     _inputIndex = -1;
         [BoxGroup("DEBUG"), SerializeField, ReadOnly]
         private bool                    _isSettingInput = false;
         [BoxGroup("DEBUG"), SerializeField]
@@ -148,7 +148,7 @@ namespace WonderDanceProj
             }
 
             // Check key binding input settings
-            if (_isSettingInput && Input.anyKeyDown)
+            if (_isSettingInput && Input.anyKeyDown && _inputIndex >= 0)
             {
                 // Get which key was pressed
                 KeyCode key = GetKeyDown();
@@ -159,7 +159,9 @@ namespace WonderDanceProj
                 else if (buttonChild.GetComponent<TextMeshProUGUI>()) buttonChild.GetComponent<TextMeshProUGUI>().text = key.ToString();
 
                 // Close ui that blocks the games
+                _fixedInputMap.keys[_inputIndex] = key;
                 _interactionBlock.gameObject.SetActive(false);
+                _inputIndex = -1;
             }
         }
 
@@ -292,7 +294,22 @@ namespace WonderDanceProj
         {
             // NAIVE SOLUTION: Check each keycode
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                // Ignore mouse button
+                switch (key)
+                {
+                    case KeyCode.Mouse0: continue;
+                    case KeyCode.Mouse1: continue;
+                    case KeyCode.Mouse2: continue;
+                    case KeyCode.Mouse3: continue;
+                    case KeyCode.Mouse4: continue;
+                    case KeyCode.Mouse5: continue;
+                    case KeyCode.Mouse6: continue;
+                }
+
+                // Return accepted key
                 if (Input.GetKeyDown(key)) return key;
+            }
             return KeyCode.None;
         }
 

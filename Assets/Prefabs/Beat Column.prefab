@@ -83,7 +83,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 2.25}
+  m_Size: {x: 1, y: 1.5}
   m_EdgeRadius: 0
 --- !u!210 &2471783059536195488
 SortingGroup:
@@ -117,6 +117,7 @@ MonoBehaviour:
   _holdNotePrefab: {fileID: 1787269702966540238, guid: 7257e9a993feaba40b29c2c46476df50, type: 3}
   _releasedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   _pressedColor: {r: 0.254717, g: 0.254717, b: 0.254717, a: 1}
+  _debug: 1
 --- !u!1 &3646402544542671109
 GameObject:
   m_ObjectHideFlags: 0

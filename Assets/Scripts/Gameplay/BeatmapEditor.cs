@@ -165,7 +165,12 @@ namespace WonderDanceProj
             _holdNotePainter.onClick.RemoveAllListeners();
 
             // Check current player doesn't have a beatmap to be play
-            _oldBeatmap = BeatmapPlayer.Singleton.CurrentBeatmap;
+            _oldBeatmap = GameManager.Singleton._selectedMap;
+
+            // Save old beatmap by reverting changes
+            RevertChanges();
+
+            // Check if song does not exists
             if (_oldBeatmap.Song == null)
             {
                 #if UNITY_EDITOR
@@ -174,9 +179,6 @@ namespace WonderDanceProj
                 gameObject.SetActive(false);
                 return;
             }
-
-            // Save old beatmap by reverting changes
-            RevertChanges();
 
             // Set other debug info, calculate time on that index, then break down into minutes, seconds, and miliseconds
             int si = BeatmapPlayer.GetSequenceIndex(_newBeatmap, SoundMaster.Singleton.AtSongTime);
@@ -208,6 +210,9 @@ namespace WonderDanceProj
             {
                 // Set division
                 _newBeatmap.TemporaryDivision = (Division)index;
+
+                // Call event
+                OnDivisionChange?.Invoke(_newBeatmap.TemporaryDivision);
             });
             _dropSpeedInput.onValueChanged.AddListener(val =>
             {
@@ -238,7 +243,7 @@ namespace WonderDanceProj
                 UpdateCurrentPerfectLineInfo(si, ssi);
 
                 // Check whether the speaker is currently playing the song, then ignore
-                if (SoundMaster.Singleton.IsPlaying || !UIGameManager.IsEditorModeActive) return;
+                if (SoundMaster.Singleton.IsPlaying) return;
 
                 // Set at time play
                 SoundMaster.Singleton.AtSongTime = atTime;
@@ -572,7 +577,7 @@ namespace WonderDanceProj
         {
             // Set back to old beatmap data, update all ui changes
             _newBeatmap = (Beatmap)_oldBeatmap.Clone();
-            BeatmapPlayer.Singleton.CurrentBeatmap = _newBeatmap;
+            BeatmapPlayer.Singleton.SetBeatmap(_newBeatmap);
             _mapNameTxt.text = _oldBeatmap.MapName;
             _bpmInput.text = $"{_oldBeatmap.BPM}";
             _divisionDropdown.value = (int)_oldBeatmap.TemporaryDivision;
